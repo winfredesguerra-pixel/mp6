@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Item Management System</title>
+</head>
+<body>
+<h1>Item Management System</h1>
+<input type="hidden" id="editIndex" value="-1">
+<label>Item Name:</label>
+<input type="text" id="itemName">
+<br><br>
+<label>Quantity:</label>
+<input type="number" id="quantity">
+<br><br>
+<label>Price:</label>
+<input type="number" id="price">
+<br><br>
+<input type="button" onclick="saveItem()" value="Add Item">
+<hr>
+<h2>Item Records</h2>
+<table border="1" cellpadding="10">
+<thead>
+<tr>
+<th>CTR</th>
+<th>Item Name</th>
+<th>Quantity</th>
+<th>Price</th>
+<th>Total Price</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="itemTable">
+</tbody>
+<tfoot>
+<tr>
+<td colspan="4">Grand Total</td>
+<td id="grandTotal">0</td>
+<td></td>
+</tr>
+</tfoot>
+</table>
+ 
+<script>
+ 
+	let items = [];
+ 
+	function saveItem() {
+ 
+	    let name = document.getElementById("itemName").value;
+	    let qty = document.getElementById("quantity").value;
+	    let price = document.getElementById("price").value;
+	    let editIndex = parseInt(document.getElementById("editIndex").value);
+ 
+	    if (editIndex == -1) {
+	        let newItem = {
+	            name: name,
+	            qty: qty,
+	            price: price
+	        };
+ 
+	        items[items.length] = newItem;
+ 
+	        alert("Item added successfully.");
+ 
+	    } else {
+	        items[editIndex].name = name;
+	        items[editIndex].qty = qty;
+	        items[editIndex].price = price;
+ 
+	        alert("Item updated successfully.");
+	    }
+ 
+	    clearForm();
+	    displayItems();
+	}
+ 
+	function displayItems() {
+ 
+	    let table = document.getElementById("itemTable");
+	    table.innerHTML = "";
+ 
+	    if (items.length == 0) {
+	        table.innerHTML =
+	            "<tr><td colspan='6'>No item records available.</td></tr>";
+	        updateGrandTotal();
+	        return;
+	    }
+ 
+	    for (let index = 0; index < items.length; index++) {
+ 
+	        let total = items[index].qty * items[index].price;
+ 
+	        table.innerHTML +=
+	            "<tr>" +
+	            "<td>" + (index + 1) + "</td>" +
+	            "<td>" + items[index].name + "</td>" +
+	            "<td>" + items[index].qty + "</td>" +
+	            "<td>" + items[index].price + "</td>" +
+	            "<td>" + total + "</td>" +
+	            "<td>" +
+	            "<button onclick='editItem(" + index + ")'>Edit</button>" +
+	            "<button onclick='deleteItem(" + index + ")'>Delete</button>" +
+	            "</td>" +
+	            "</tr>";
+	    }
+ 
+	    updateGrandTotal();
+	}
+ 
+	function updateGrandTotal() {
+ 
+	    let grandTotal = 0;
+ 
+	    for (let index = 0; index < items.length; index++) {
+	        grandTotal = grandTotal + (items[index].qty * items[index].price);
+	    }
+ 
+	    document.getElementById("grandTotal").innerHTML = grandTotal;
+	}
+ 
+	function editItem(index) {
+	    document.getElementById("itemName").value = items[index].name;
+	    document.getElementById("quantity").value = items[index].qty;
+	    document.getElementById("price").value = items[index].price;
+	    document.getElementById("editIndex").value = index;
+	}
+ 
+	function deleteItem(index) {
+ 
+	    let answer = confirm("Are you sure you want to delete this item?");
+	    if (answer == false) {
+	        return;
+	    }
+ 
+	    for (let position = index; position < items.length - 1; position++) {
+	        items[position] = items[position + 1];
+	    }
+ 
+	    items.length = items.length - 1;
+ 
+	    clearForm();
+	    displayItems();
+	    alert("Item deleted successfully.");
+	}
+ 
+	function clearForm() {
+	    document.getElementById("itemName").value = "";
+	    document.getElementById("quantity").value = "";
+	    document.getElementById("price").value = "";
+	    document.getElementById("editIndex").value = -1;
+	}
+ 
+	displayItems();
+</script>
+ 
+</body>
+</html>
+
